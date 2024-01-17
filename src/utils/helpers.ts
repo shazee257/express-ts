@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { IUser } from './interfaces';
 
 // generate response with status code
 export const generateResponse = (data: any, message: string, res: Response, code = 200) => {
@@ -20,30 +21,40 @@ export const parseBody = (body: any) => {
 }
 
 // pagination with mongoose paginate library
-// export const getMongoosePaginatedData = async ({
-//     model, page = 1, limit = 10, query = {}, populate = '', select = '-password', sort = { createdAt: -1 },
-// }) => {
-//     const options = {
-//         select,
-//         sort,
-//         populate,
-//         lean: true,
-//         page,
-//         limit,
-//         customLabels: {
-//             totalDocs: 'totalItems',
-//             docs: 'data',
-//             limit: 'perPage',
-//             page: 'currentPage',
-//             meta: 'pagination',
-//         },
-//     };
+export const getMongoosePaginatedData = async (
+    {
+        model, page = 1, limit = 10, query = {}, populate = '', select = '-password', sort = { createdAt: -1 },
+    }:
+        {
+            model: any,
+            page?: number,
+            limit?: number,
+            query?: Record<string, any>,
+            populate?: string | any[],
+            select?: string,
+            sort?: Record<string, any>,
+        }) => {
+    const options = {
+        select,
+        sort,
+        populate,
+        lean: true,
+        page,
+        limit,
+        customLabels: {
+            totalDocs: 'totalItems',
+            docs: 'data',
+            limit: 'perPage',
+            page: 'currentPage',
+            meta: 'pagination',
+        },
+    };
 
-//     const { data, pagination } = await model.paginate(query, options);
-//     delete pagination?.pagingCounter;
+    const { data, pagination } = await model.paginate(query, options);
+    delete pagination?.pagingCounter;
 
-//     return { data, pagination };
-// }
+    return { data, pagination };
+}
 
 // aggregate pagination with mongoose paginate library
 // export const getMongooseAggregatePaginatedData = async ({ model, page = 1, limit = 10, query = [] }) => {
@@ -68,14 +79,9 @@ export const parseBody = (body: any) => {
 // }
 
 
-interface AccessTokenEnvVars {
-    ACCESS_TOKEN_EXPIRATION: string;
-    ACCESS_TOKEN_SECRET: string;
-}
-
 // generate access token
-export const generateAccessToken = (user: Record<string, any>): string => {
-    const { ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_SECRET }: AccessTokenEnvVars = process.env as any;
+export const generateAccessToken = (user: IUser): string => {
+    const { ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_SECRET } = process.env as any;
 
     const token = jwt.sign({
         id: user._id,

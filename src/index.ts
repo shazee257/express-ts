@@ -5,11 +5,10 @@ import { createServer } from "http";
 import cookieSession from "cookie-session";
 import requestIp from "request-ip";
 import { connectDB } from "./config/db.config";
-import { log, rateLimiter } from "./middlewares";
-// import { log, rateLimiter, notFound, errorHandler } from "./middlewares/index.js";
+import { log, rateLimiter, notFound, errorHandler } from "./middlewares";
 import API from "./routes"
 import { generateResponse } from "./utils/helpers";
-// import { createDefaultAdmin } from "./controllers/index.js";
+import { createDefaultAdmin } from "./controllers";
 
 // initialize environment variables
 dotenv.config();
@@ -18,8 +17,7 @@ dotenv.config();
 const app: Application = express();
 
 // connect to database & create default admin
-connectDB();
-//.then(() => createDefaultAdmin());
+connectDB().then(() => createDefaultAdmin());
 
 // // set port
 const PORT: Number = +(process.env.PORT as string) || 5000;
@@ -41,12 +39,10 @@ app.use(rateLimiter);
 
 app.get('/', (req, res) => generateResponse(null, `Welcome to ${process.env.APP_NAME}!`, res));
 
-// res.json({ message: `${process.env.APP_NAME} - API`, data: null }));
-
 app.use(log);
 new API(app).registerGroups();
-// app.use(notFound);
-// app.use(errorHandler);
+app.use(notFound);
+app.use(errorHandler);
 
 httpServer.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
