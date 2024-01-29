@@ -37,7 +37,7 @@ export const createDefaultAdmin = async () => {
     try {
         const userExist = await findUser({ email: process.env.ADMIN_DEFAULT_EMAIL, role: ROLES.ADMIN });
         if (userExist) {
-            console.log('admin exists -> ', userExist.email);
+            console.log('admin exists ->', userExist.email);
             return
         };
 

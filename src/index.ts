@@ -8,7 +8,6 @@ import { connectDB } from "./config/db.config";
 import { log, rateLimiter, notFound, errorHandler } from "./middlewares";
 import API from "./routes"
 import { generateResponse } from "./utils/helpers";
-import { createDefaultAdmin } from "./controllers";
 
 // initialize environment variables
 dotenv.config();
@@ -16,8 +15,8 @@ dotenv.config();
 // initialize express app
 const app: Application = express();
 
-// connect to database & create default admin
-connectDB().then(() => createDefaultAdmin());
+// connect to database
+connectDB();
 
 // // set port
 const PORT: Number = +(process.env.PORT as string) || 5000;

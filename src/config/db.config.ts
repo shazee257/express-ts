@@ -1,9 +1,14 @@
 import mongoose from "mongoose"
+import { createDefaultAdmin } from "../controllers";
 
 export const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGODB_URL as string);
-        console.log(`DB connected -> : ${conn.connection.name}`);
+        const DB_URI = `${process.env.MONGODB_URL}/${process.env.DB_NAME}`;
+        const conn = await mongoose.connect(DB_URI as string);
+        console.log(`DB connected -> ${conn.connection.name}`);
+
+        // create default admin
+        await createDefaultAdmin();
     } catch (error: any) {
         console.error(`Error: ${error.message}`);
         process.exit(1);
