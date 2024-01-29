@@ -79,21 +79,6 @@ export const getMongoosePaginatedData = async (
 //     return { data, pagination };
 // }
 
-
-// generate access token
-// export const generateAccessToken = (user: IUser): string => {
-//     const { ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_SECRET } = process.env as any;
-
-//     const token = jwt.sign({
-//         id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         role: user.role,
-//     }, ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRATION });
-
-//     return token;
-// };
-
 export const asyncHandler = (requestHandler: RequestHandler) => {
     return (req: Request, res: Response, next: NextFunction) => {
         Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err));
