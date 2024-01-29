@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import jwt from 'jsonwebtoken';
-import { IUser } from './interfaces';
+import { createUser, findUser } from '../models';
+import { hash } from 'bcrypt';
+import { ROLES } from './constants';
 
 // generate response with status code
 export const generateResponse = (data: any, message: string, res: Response, code = 200) => {
@@ -80,21 +81,47 @@ export const getMongoosePaginatedData = async (
 
 
 // generate access token
-export const generateAccessToken = (user: IUser): string => {
-    const { ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_SECRET } = process.env as any;
+// export const generateAccessToken = (user: IUser): string => {
+//     const { ACCESS_TOKEN_EXPIRATION, ACCESS_TOKEN_SECRET } = process.env as any;
 
-    const token = jwt.sign({
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-    }, ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRATION });
+//     const token = jwt.sign({
+//         id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         role: user.role,
+//     }, ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRATION });
 
-    return token;
-};
+//     return token;
+// };
 
 export const asyncHandler = (requestHandler: RequestHandler) => {
     return (req: Request, res: Response, next: NextFunction) => {
         Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err));
     };
+};
+
+// create default admin
+export const createDefaultAdmin = async () => {
+    try {
+        const userExist = await findUser({ email: process.env.ADMIN_DEFAULT_EMAIL, role: ROLES.ADMIN });
+        if (userExist) {
+            console.log('admin exists ->', userExist.email);
+            return
+        };
+
+        console.log('admin not exist');
+        const password = await hash(process.env.ADMIN_DEFAULT_PASSWORD as string, 10);
+
+        // create default admin
+        await createUser({
+            name: 'Admin',
+            email: process.env.ADMIN_DEFAULT_EMAIL,
+            password,
+            role: ROLES.ADMIN
+        });
+
+        console.log('Admin default created successfully');
+    } catch (error) {
+        console.log('error - create default admin -> ', error);
+    }
 };

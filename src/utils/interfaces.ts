@@ -1,14 +1,3 @@
-export interface IUser {
-    _id?: string;
-    name?: string;
-    email: string;
-    role: string;
-    password?: string;
-    fcmToken?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
-}
-
 export interface IPaginationResult<T> {
     data: T[];
     pagination: {
@@ -21,4 +10,13 @@ export interface IPaginationResult<T> {
         prevPage: number | null;
         nextPage: number | null;
     };
+}
+
+export interface IPaginationFunctionParams {
+    query?: Record<string, any>,
+    page?: number,
+    limit?: number,
+    populate?: string | any[],
+    select?: string,
+    sort?: Record<string, any>,
 }

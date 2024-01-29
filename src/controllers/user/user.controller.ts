@@ -1,9 +1,7 @@
-import { compare, hash } from "bcrypt";
 import { Request, Response, NextFunction } from "express";
-import { asyncHandler, generateAccessToken, generateResponse, parseBody } from "../../utils/helpers";
-import { createUser, findUser, getAllUsers } from "../../models";
-import { ROLES, STATUS_CODES } from "../../utils/constants";
-import { IUser } from "../../utils/interfaces";
+import { asyncHandler, generateResponse, parseBody } from "../../utils/helpers";
+import { IUser, createUser, findUser, getAllUsers } from "../../models";
+import { STATUS_CODES } from "../../utils/constants";
 
 // register user
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
@@ -16,13 +14,9 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
             message: "User already exists",
         });
 
-        // hash password
-        const hashedPassword = await hash(body.password, 10);
-        body.password = hashedPassword;
-
         const user = await createUser(body);
 
-        const accessToken = generateAccessToken(user);
+        const accessToken = await user.generateAccessToken();
         req.session = { accessToken };
 
         generateResponse({ user, accessToken, }, "Register successful", res);
@@ -31,55 +25,29 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
     }
 });
 
-// create default admin
-export const createDefaultAdmin = async () => {
-    try {
-        const userExist = await findUser({ email: process.env.ADMIN_DEFAULT_EMAIL, role: ROLES.ADMIN });
-        if (userExist) {
-            console.log('admin exists ->', userExist.email);
-            return
-        };
-
-        console.log('admin not exist');
-        const password = await hash(process.env.ADMIN_DEFAULT_PASSWORD as string, 10);
-
-        // create default admin
-        await createUser({
-            name: 'Admin',
-            email: process.env.ADMIN_DEFAULT_EMAIL,
-            password,
-            role: ROLES.ADMIN
-        });
-
-        console.log('Admin default created successfully');
-    } catch (error) {
-        console.log('error - create default admin -> ', error);
-    }
-};
-
 // login user
 export const login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const body = parseBody(req.body);
 
     try {
-        let user: any = await findUser({ email: body?.email }).select('+password');
+        let user = await findUser({ email: body?.email }).select('+password');
         if (!user) return next({
             statusCode: STATUS_CODES.BAD_REQUEST,
             message: 'Invalid email or password'
         });
 
-        const isMatch = await compare(body.password, user.password);
+        const isMatch = await user.isPasswordCorrect(body.password);
         if (!isMatch) return next({
             statusCode: STATUS_CODES.UNAUTHORIZED,
             message: 'Invalid password'
         });
 
-        // remove password
-        // user = user.toObject();
-        // delete user.password;
-
-        const accessToken = generateAccessToken(user);
+        const accessToken = await user.generateAccessToken();
         req.session = { accessToken };
+
+        // remove password
+        user = user.toObject();
+        delete user.password;
 
         generateResponse({ user, accessToken }, 'Login successful', res);
     } catch (error) {
