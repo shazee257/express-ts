@@ -1,7 +1,6 @@
 import { compare, hash } from "bcrypt";
 import { Request, Response, NextFunction } from "express";
-import asyncHandler from 'express-async-handler';
-import { generateAccessToken, generateResponse, parseBody } from "../../utils/helpers";
+import { asyncHandler, generateAccessToken, generateResponse, parseBody } from "../../utils/helpers";
 import { createUser, findUser, getAllUsers } from "../../models";
 import { ROLES, STATUS_CODES } from "../../utils/constants";
 import { IUser } from "../../utils/interfaces";

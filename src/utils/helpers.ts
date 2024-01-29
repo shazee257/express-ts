@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import { IUser } from './interfaces';
 
@@ -91,4 +91,10 @@ export const generateAccessToken = (user: IUser): string => {
     }, ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_EXPIRATION });
 
     return token;
+};
+
+export const asyncHandler = (requestHandler: RequestHandler) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err));
+    };
 };
