@@ -1,5 +1,5 @@
-import { defaultHandler } from "../../controllers";
 import { Router } from "express";
+import { defaultHandler } from "../../controllers/root.controller";
 
 export default class RootAPI {
     constructor(private readonly router: Router) {
