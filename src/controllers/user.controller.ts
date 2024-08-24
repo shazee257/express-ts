@@ -3,7 +3,6 @@ import { asyncHandler, generateResponse, parseBody } from "../utils/helpers";
 import { ROLES, STATUS_CODES } from "../utils/constants";
 import { UserService } from "../services";
 
-// register user
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const body = parseBody(req.body);
 
@@ -21,7 +20,6 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
     generateResponse({ user, accessToken, }, "Register successful", res);
 });
 
-// login user
 export const login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const body = parseBody(req.body);
 
@@ -48,17 +46,18 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
     generateResponse({ user, accessToken }, 'Login successful', res);
 });
 
-// // get all users
-// export const fetchAllUsers = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-//     const page: number = +(req.query.page || 1);
-//     const limit = +(req.query.limit || 10);
-//     const query = { role: { $ne: ROLES.ADMIN } };
+export const fetchAllUsers = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const page: number = +(req.query.page || 1);
+    const limit: number = +(req.query.limit || 10);
+    const query = {};
 
-//     const usersData = await getAllUsers({ query, page, limit });
-//     if (usersData?.data?.length === 0) {
-//         generateResponse(null, 'No user found', res);
-//         return;
-//     }
+    const usersData = await UserService.getAll({ query, page, limit });
+    generateResponse(usersData, 'List fetched successfully', res);
+});
 
-//     generateResponse(usersData, 'List fetched successfully', res);
-// });
+export const fetchUser = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const userId = '66ca31c45ea6c0c2b6f9dad1';
+
+    const user = await UserService.getOne({ _id: userId });
+    generateResponse(user, 'User fetched successfully', res);
+});

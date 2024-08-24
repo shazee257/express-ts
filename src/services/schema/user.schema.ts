@@ -3,6 +3,19 @@ import { ROLES } from "../../utils/constants";
 import { compare, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
 
+declare global {
+    namespace Express {
+        interface Request {
+            user: {
+                id: string,
+                name: string,
+                email: string,
+                role: string,
+            };
+        }
+    }
+}
+
 export interface IUser extends Document {
     id?: string;
     _id?: string;

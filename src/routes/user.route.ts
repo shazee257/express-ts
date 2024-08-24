@@ -1,15 +1,15 @@
 import { Router } from "express";
-import { login, register } from "../../controllers/user.controller";
+import { fetchAllUsers, fetchUser } from "../controllers/user.controller";
 
-export default class AuthAPI {
+export default class UserAPI {
     constructor(private readonly router: Router) {
         this.router = Router();
         this.setupRoutes();
     }
 
     setupRoutes() {
-        this.router.post('/register', register);
-        this.router.post('/login', login);
+        this.router.get('/', fetchAllUsers);
+        this.router.get('/profile', fetchUser);
     }
 
     getRouter() {
@@ -17,6 +17,6 @@ export default class AuthAPI {
     }
 
     getRouterGroup() {
-        return '/auth';
+        return '/user';
     }
 }

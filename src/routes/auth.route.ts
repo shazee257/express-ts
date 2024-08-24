@@ -1,14 +1,15 @@
 import { Router } from "express";
-import { defaultHandler } from "../../controllers/root.controller";
+import { login, register } from "../controllers/user.controller";
 
-export default class RootAPI {
+export default class AuthAPI {
     constructor(private readonly router: Router) {
         this.router = Router();
         this.setupRoutes();
     }
 
     setupRoutes() {
-        this.router.get('/', defaultHandler);
+        this.router.post('/register', register);
+        this.router.post('/login', login);
     }
 
     getRouter() {
@@ -16,6 +17,6 @@ export default class RootAPI {
     }
 
     getRouterGroup() {
-        return '/';
+        return '/auth';
     }
 }

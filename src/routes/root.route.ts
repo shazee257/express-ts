@@ -1,14 +1,14 @@
 import { Router } from "express";
-import { fetchAllUsers } from "../../controllers";
+import { defaultHandler } from "../controllers/root.controller";
 
-export default class UserAPI {
+export default class RootAPI {
     constructor(private readonly router: Router) {
         this.router = Router();
         this.setupRoutes();
     }
 
     setupRoutes() {
-        this.router.get('/', fetchAllUsers);
+        this.router.get('/', defaultHandler);
     }
 
     getRouter() {
@@ -16,6 +16,6 @@ export default class UserAPI {
     }
 
     getRouterGroup() {
-        return '/user';
+        return '/';
     }
 }
