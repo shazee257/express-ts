@@ -4,6 +4,7 @@ import { compare, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
 
 export interface IUser extends Document {
+    id?: string;
     _id?: string;
     name?: string;
     email?: string;
