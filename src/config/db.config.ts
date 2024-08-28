@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 
 export const connectDB = async () => {
     try {
-        const DB_URI = `${process.env.MONGODB_URL}/${process.env.DB_NAME}`;
+        const DB_URI = `${process.env.MONGODB_URL}/${process.env.DB_NAME}${process.env.MONGODB_OPTIONS ?? ''}`;
         const conn = await mongoose.connect(DB_URI as string);
         console.log(`DB connected -> ${conn.connection.name}`);
 

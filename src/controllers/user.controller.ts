@@ -23,7 +23,6 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
 export const login = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const body = parseBody(req.body);
 
-    // let user = await findUser({ email: body?.email }).select('+password');
     let user: any = await UserService.getOne({ email: body?.email }).select('+password');
     if (!user) return next({
         statusCode: STATUS_CODES.BAD_REQUEST,
@@ -39,9 +38,13 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
     const accessToken = await user.generateAccessToken();
     req.session = { accessToken };
 
-    // remove password
-    user = user.toObject();
-    delete user.password;
+    // // remove password
+    // user = user.toObject();
+    // delete user.password;
+
+    user = await UserService.updateOne({ _id: user._id }, { fcmToken: body.fcmToken, name: 'User Testing11' }).select('+fcmtoken');
+    console.log({ user });
+
 
     generateResponse({ user, accessToken }, 'Login successful', res);
 });

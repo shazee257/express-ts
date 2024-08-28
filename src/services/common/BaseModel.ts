@@ -2,7 +2,7 @@ import { FilterQuery, PipelineStage, PopulateOptions, ProjectionType, QueryOptio
 import { Document, Model, model, PaginateModel, QueryWithHelpers, Schema } from "mongoose";
 import {
     getAggregatedPaginatedData, getPaginatedData,
-    mongooseAggregatePlugin, MongoosePaginateModel,
+    mongooseAggregatePlugin,
     mongoosePlugin, PaginatedData
 } from "mongoose-pagination-v2";
 
@@ -50,6 +50,11 @@ export default class BaseModel<T extends Document> {
 
     private setModel(model: Model<T>): void {
         this.model = model;
+    }
+
+    // Getter to expose the Mongoose model
+    getModel(): Model<T> {
+        return this.model;
     }
 
     // Create a document
