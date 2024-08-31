@@ -8,6 +8,8 @@ import { connectDB } from "./config/db.config";
 import { log, rateLimiter, notFound, errorHandler } from "./middlewares";
 import API from "./routes"
 import { generateResponse } from "./utils/helpers";
+import { Server } from "socket.io";
+import { initializeSocketIO } from "./services/socket";
 
 // initialize environment variables
 dotenv.config();
@@ -23,6 +25,20 @@ const PORT: Number = +(process.env.PORT as string) || 5000;
 
 // initialize http server
 const httpServer = createServer(app);
+
+// initialize socket.io
+const io = new Server(httpServer, {
+    pingTimeout: 60000, // 60 seconds for ping timeout to disconnect the user if the user is not responding
+    cors: {
+        origin: "*",
+        credentials: true,
+    },
+});
+
+// mount io to app
+app.set("io", io);
+
+initializeSocketIO(io);
 
 // set up middlewares
 app.use(requestIp.mw());

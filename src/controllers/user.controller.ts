@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { asyncHandler, generateResponse, parseBody } from "../utils/helpers";
-import { ROLES, STATUS_CODES } from "../utils/constants";
+import { STATUS_CODES } from "../utils/constants";
 import { UserService } from "../services";
 import { IPaginationParams } from "../utils/interfaces";
 
