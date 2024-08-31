@@ -39,7 +39,6 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
     req.session = { accessToken };
 
     user = await UserService.updateOne({ _id: user._id }, { fcmToken: body.fcmToken, name: 'User Testing11' }).select('+fcmtoken');
-    console.log({ user });
 
     generateResponse({ user, accessToken }, 'Login successful', res);
 });
