@@ -1,22 +1,14 @@
 import { PipelineStage, PopulateOptions, ProjectionType, QueryOptions, RootFilterQuery, UpdateQuery } from "mongoose";
 import { Document, Model, model, PaginateModel, QueryWithHelpers, Schema } from "mongoose";
-import {
-    getAggregatedPaginatedData, getPaginatedData,
-    mongooseAggregatePlugin,
-    mongoosePlugin, PaginatedData
-} from "mongoose-pagination-v2";
+import { getAggregatedPaginatedData, getPaginatedData, mongooseAggregatePlugin, mongoosePlugin, PaginatedData } from "mongoose-pagination-v2";
+import { IPaginationParams } from "../../utils/interfaces";
 
-export interface GetPaginationParams {
-    page?: number;
-    limit?: number;
-}
-
-export interface GetPaginationQueryParams extends GetPaginationParams {
+export interface GetPaginationQueryParams extends IPaginationParams {
     query?: RootFilterQuery<any>;
     populate?: string | string[] | PopulateOptions | PopulateOptions[];
 }
 
-export interface GetAggregatedPaginationQueryParams extends GetPaginationParams {
+export interface GetAggregatedPaginationQueryParams extends IPaginationParams {
     query?: PipelineStage[];
 }
 

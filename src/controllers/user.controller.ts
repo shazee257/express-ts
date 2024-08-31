@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { asyncHandler, generateResponse, parseBody } from "../utils/helpers";
 import { ROLES, STATUS_CODES } from "../utils/constants";
 import { UserService } from "../services";
+import { IPaginationParams } from "../utils/interfaces";
 
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const body = parseBody(req.body);
@@ -44,9 +45,13 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
 });
 
 export const fetchAllUsers = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const page: number = +(req.query.page || 1);
-    const limit: number = +(req.query.limit || 10);
-    const query = {};
+    const { page = 1, limit = 10, search = '' }: IPaginationParams = req.query;
+    const query = {
+        $or: [
+            { name: { $regex: search, $options: 'i' } },
+            { email: { $regex: search, $options: 'i' } },
+        ],
+    };
 
     const usersData = await UserService.getAll({ query, page, limit });
     generateResponse(usersData, 'List fetched successfully', res);
