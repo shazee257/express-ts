@@ -11,7 +11,7 @@ export default class UserAPI {
 
     setupRoutes() {
         this.router.get('/', authMiddleware(Object.values(ROLES)), fetchAllUsers);
-        this.router.get('/profile', fetchUser);
+        this.router.get('/profile', authMiddleware(Object.values(ROLES)), fetchUser);
     }
 
     getRouter() {

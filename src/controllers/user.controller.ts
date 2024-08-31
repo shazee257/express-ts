@@ -53,8 +53,6 @@ export const fetchAllUsers = asyncHandler(async (req: Request, res: Response, ne
 });
 
 export const fetchUser = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const userId = '66ca31c45ea6c0c2b6f9dad1';
-
-    const user = await UserService.getOne({ _id: userId });
+    const user = await UserService.getOne({ _id: req.user.id });
     generateResponse(user, 'User fetched successfully', res);
 });

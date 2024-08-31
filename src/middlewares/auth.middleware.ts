@@ -18,8 +18,6 @@ export default function authMiddleware(roles: string[]) {
             });
 
             req.user = { ...decoded };
-            console.log('first >>>>>>>>', req.user);
-
 
             const user = await UserService.getOne({ _id: req.user.id });
             if (!user) return next({
