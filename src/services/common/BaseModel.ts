@@ -1,4 +1,4 @@
-import { FilterQuery, PipelineStage, PopulateOptions, ProjectionType, QueryOptions, UpdateQuery } from "mongoose";
+import { PipelineStage, PopulateOptions, ProjectionType, QueryOptions, RootFilterQuery, UpdateQuery } from "mongoose";
 import { Document, Model, model, PaginateModel, QueryWithHelpers, Schema } from "mongoose";
 import {
     getAggregatedPaginatedData, getPaginatedData,
@@ -9,11 +9,10 @@ import {
 export interface GetPaginationParams {
     page?: number;
     limit?: number;
-    search?: string;
 }
 
 export interface GetPaginationQueryParams extends GetPaginationParams {
-    query?: FilterQuery<any>;
+    query?: RootFilterQuery<any>;
     populate?: string | string[] | PopulateOptions | PopulateOptions[];
 }
 
@@ -63,7 +62,7 @@ export default class BaseModel<T extends Document> {
     }
 
     // Get a document by query
-    getOne(filter?: FilterQuery<T>, projection?: ProjectionType<T>, options?: QueryOptions<T>): QueryWithHelpers<T | null, T> {
+    getOne(filter?: RootFilterQuery<T>, projection?: ProjectionType<T>, options?: QueryOptions<T>): QueryWithHelpers<T | null, T> {
         return this.model.findOne(filter, projection, options);
     }
 
@@ -93,12 +92,12 @@ export default class BaseModel<T extends Document> {
     }
 
     // Update a document
-    updateOne(filter: FilterQuery<T>, update: UpdateQuery<T>, options?: QueryOptions<T>): QueryWithHelpers<T | null, T> {
+    updateOne(filter: RootFilterQuery<T>, update: UpdateQuery<T>, options?: QueryOptions<T>): QueryWithHelpers<T | null, T> {
         return this.model.findOneAndUpdate(filter, update, options || { new: true });
     }
 
     // Delete a document by query
-    deleteOne(filter: FilterQuery<T>): QueryWithHelpers<T | null, T> {
+    deleteOne(filter: RootFilterQuery<T>): QueryWithHelpers<T | null, T> {
         return this.model.findOneAndDelete(filter);
     }
 }

@@ -16,7 +16,7 @@ declare global {
     }
 }
 
-export interface IUser extends Document {
+interface IUser {
     id?: string;
     _id?: string;
     name?: string;
@@ -28,7 +28,9 @@ export interface IUser extends Document {
     updatedAt?: string;
 }
 
-export const UserSchema = new Schema<IUser>({
+export type UserDocument = IUser & Document;
+
+export const UserSchema = new Schema<UserDocument>({
     name: { type: String },
     email: { type: String, lowercase: true },
     password: { type: String, require: true, select: false },
@@ -39,7 +41,7 @@ export const UserSchema = new Schema<IUser>({
 // UserSchema.index({ email: 1 }, { unique: true });
 
 // hash password before saving
-UserSchema.pre<IUser>("save", async function (next: any) {
+UserSchema.pre<UserDocument>("save", async function (next: any) {
     if (!this.isModified("password")) return next();
     this.password = await hash(this.password as string, 10);
     next();
