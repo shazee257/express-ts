@@ -1,4 +1,5 @@
-name: Check & deploy API documentation
+
+      name: Check & deploy API documentation
 permissions:
   contents: read
   pull-requests: write
